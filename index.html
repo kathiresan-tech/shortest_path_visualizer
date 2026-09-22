@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Shortest Path Visualizer — watch Dijkstra's algorithm explore a graph and find the optimal path in real time.">
+    <title>Shortest Path Visualizer | Dijkstra's Algorithm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-brand">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="5" cy="6" r="2"/>
+                    <circle cx="19" cy="6" r="2"/>
+                    <circle cx="12" cy="18" r="2"/>
+                    <circle cx="19" cy="18" r="2"/>
+                    <line x1="7" y1="6" x2="17" y2="6"/>
+                    <line x1="6" y1="8" x2="11" y2="16"/>
+                    <line x1="13" y1="16" x2="18" y2="8"/>
+                    <line x1="14" y1="18" x2="17" y2="18"/>
+                </svg>
+            </div>
+            <div>
+                <h1>Shortest Path Visualizer</h1>
+                <p class="header-subtitle">Dijkstra's Algorithm — Interactive Graph Explorer</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <span class="status-badge" id="statusBadge">Ready</span>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="main-layout">
+
+        <!-- Left Panel — Controls -->
+        <aside class="panel controls-panel">
+            <div class="panel-section">
+                <h2 class="panel-title">
+                    <span class="panel-icon">🛠️</span> Tools
+                </h2>
+                <div class="tool-buttons">
+                    <button class="tool-btn active" id="btnAddNode" title="Click canvas to add a node">
+                        <span class="tool-icon">⊕</span> Add Node
+                    </button>
+                    <button class="tool-btn" id="btnAddEdge" title="Click two nodes to connect them">
+                        <span class="tool-icon">🔗</span> Add Edge
+                    </button>
+                    <button class="tool-btn" id="btnSetSource" title="Click a node to set as source">
+                        <span class="tool-icon">🟢</span> Set Source
+                    </button>
+                    <button class="tool-btn" id="btnSetDest" title="Click a node to set as destination">
+                        <span class="tool-icon">🔴</span> Set Destination
+                    </button>
+                    <button class="tool-btn" id="btnDelete" title="Click a node or edge to delete">
+                        <span class="tool-icon">🗑️</span> Delete
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2 class="panel-title">
+                    <span class="panel-icon">⚡</span> Actions
+                </h2>
+                <button class="action-btn primary" id="btnRun">
+                    <span>▶</span> Run Dijkstra
+                </button>
+                <button class="action-btn" id="btnRandomGraph">
+                    <span>🎲</span> Random Graph
+                </button>
+                <button class="action-btn danger" id="btnClear">
+                    <span>✕</span> Clear All
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h2 class="panel-title">
+                    <span class="panel-icon">🎚️</span> Animation Speed
+                </h2>
+                <div class="speed-control">
+                    <span class="speed-label">Slow</span>
+                    <input type="range" id="speedSlider" min="50" max="1000" value="400" step="50">
+                    <span class="speed-label">Fast</span>
+                </div>
+                <div class="speed-value" id="speedValue">400ms</div>
+            </div>
+
+            <div class="panel-section">
+                <h2 class="panel-title">
+                    <span class="panel-icon">📊</span> Graph Info
+                </h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Nodes</span>
+                        <span class="info-value" id="infoNodes">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Edges</span>
+                        <span class="info-value" id="infoEdges">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Source</span>
+                        <span class="info-value" id="infoSource">—</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Destination</span>
+                        <span class="info-value" id="infoDest">—</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center — Canvas -->
+        <section class="canvas-container">
+            <canvas id="graphCanvas"></canvas>
+            <div class="canvas-hint" id="canvasHint">Click anywhere to add a node</div>
+        </section>
+
+        <!-- Right Panel — Results -->
+        <aside class="panel results-panel">
+            <div class="panel-section">
+                <h2 class="panel-title">
+                    <span class="panel-icon">🏆</span> Result
+                </h2>
+                <div class="result-card" id="resultCard">
+                    <div class="result-placeholder">Run the algorithm to see results</div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2 class="panel-title">
+                    <span class="panel-icon">📋</span> Distance Table
+                </h2>
+                <div class="distance-table-wrapper" id="distanceTableWrapper">
+                    <div class="result-placeholder">No data yet</div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2 class="panel-title">
+                    <span class="panel-icon">📜</span> Algorithm Log
+                </h2>
+                <div class="log-container" id="logContainer">
+                    <div class="result-placeholder">Algorithm steps will appear here</div>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Edge Weight Modal -->
+    <div class="modal-overlay" id="weightModal">
+        <div class="modal-card">
+            <h3>Edge Weight</h3>
+            <p>Enter the weight for this edge:</p>
+            <input type="number" id="weightInput" min="1" max="999" value="1" autofocus>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="weightCancel">Cancel</button>
+                <button class="modal-btn confirm" id="weightConfirm">Add Edge</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
